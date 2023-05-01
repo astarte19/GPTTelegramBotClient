@@ -23,50 +23,13 @@ namespace GPTTelegramBotClient
 
         private static string apiKey = "your_api_key";
         private static string endpoint = "https://api.openai.com/v1/chat/completions";
-        private static string DBConnection = "Data Source=UsersDB.db;";
+        
 
         [Action("/start", "Меню")]
         public async Task Start()
-        {
-            
-            PushL($"✋ Привет, {Context.GetUserFullName()}!\n\n⚪ <b>Это клиент для Chat GPT!</b>");
-            bool HasAccess = false;
-            bool IsAdmin = false;
-
-            SQLiteConnection DB = new SQLiteConnection(DBConnection);
-            DB.Open();
-            SQLiteCommand cmd = DB.CreateCommand();
-            cmd.CommandText = $"SELECT * FROM Users WHERE UserId = '{ChatId.ToString()}'";
-            SQLiteDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                HasAccess = Convert.ToInt32(reader["HasAccess"]) == 1 ? true : false;
-                IsAdmin = Convert.ToInt32(reader["IsAdmin"]) == 1 ? true : false;
-            }
-            DB.Close();
-            if (HasAccess)
-            {
-                if(IsAdmin)
-                {
-                    PushL("Панель управления пользователями");                    
-                    RowButton("💁 Показать пользователей",Q(ShowUsers));
-                    RowButton("✅ Добавить пользователя");
-                    RowButton("❌ Удалить пользователя");
-                    RowButton("📱 Начать диалог", Q(SendRequestAndGetResponse));
-
-                }
-                else
-                {
-                    RowButton("📱 Начать диалог",Q(SendRequestAndGetResponse));
-
-                }               
-            }
-            else
-            {
-                PushL("Для получения доступа обратитесь к администратору!");
-                RowButton("⏪ Меню", Q(Start));
-            }
-                      
+        {           
+            PushL($"✋ Привет, {Context.GetUserFullName()}!\n\n⚪ <b>Это Telegram-клиент для OpenAI ChatGPT!</b>");           
+            RowButton("📱 Начать диалог",Q(SendRequestAndGetResponse));                               
         }
         [Action]
         public async Task SendRequestAndGetResponse()
@@ -91,23 +54,7 @@ namespace GPTTelegramBotClient
             }
            
         }
-        [Action]
-        public async Task ShowUsers()
-        {
-           
-            SQLiteConnection DB = new SQLiteConnection(DBConnection);
-            DB.Open();
-            SQLiteCommand cmd = DB.CreateCommand();
-            cmd.CommandText = $"SELECT rowid,HasAccess,IsAdmin,Role,UserId FROM Users";
-            SQLiteDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                string HasAccess = Convert.ToInt32(reader["HasAccess"]) == 1 ? "Yes" : "No";
-                string IsAdmin = Convert.ToInt32(reader["IsAdmin"]) == 1 ? "Yes" : "No";
-                PushL($"#{Convert.ToInt32(reader["rowid"])}\nRole: {reader["Role"].ToString()}\nHasAccess: {HasAccess}\nIsAdmin: {IsAdmin}\nChatID: {reader["UserId"].ToString()}");
-            }
-            DB.Close();
-        }
+
         public async Task<string> SendRequest(string requestText)
         {
             List<Message> messages = new List<Message>();

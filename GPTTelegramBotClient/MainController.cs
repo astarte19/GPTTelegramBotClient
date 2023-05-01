@@ -21,7 +21,7 @@ namespace GPTTelegramBotClient
     public class MainController : BotController
     {
 
-        private static string apiKey = "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";
+        private static string apiKey = "your_api_key";
         private static string endpoint = "https://api.openai.com/v1/chat/completions";
         private static string DBConnection = "Data Source=UsersDB.db;";
 

@@ -28,7 +28,7 @@ namespace GPTTelegramBotClient
         [Action("/start", "Меню")]
         public async Task Start()
         {           
-            PushL($"✋ Привет, {Context.GetUserFullName()}!\n\n⚪ <b>Это Telegram-клиент для OpenAI ChatGPT!</b>");           
+            PushL($"✋ Привет, {Context.GetUserFullName()}!");           
             RowButton("📱 Начать диалог",Q(SendRequestAndGetResponse));                               
         }
         [Action]
@@ -39,13 +39,15 @@ namespace GPTTelegramBotClient
             {
                 PushL("📖 Введите запрос:");
                 await Send();
-                string requestText = await AwaitText();
-                if (requestText.Equals("/start"))
-                {
-                    PushL("⛔ Диалог остановлен.");
-                    await Send();
-                    break;                    
-                }
+                string? requestText = await AwaitText();
+               
+                    if (requestText.Equals("/start"))
+                    {
+                        PushL("⛔ Диалог остановлен.");
+                        await Send();
+                        break;
+                    }
+                                   
                 PushL("⌛ Ожидание ответа...");
                 await Send();
                 string responseText = await SendRequest(requestText);
@@ -65,6 +67,7 @@ namespace GPTTelegramBotClient
             var requestData = new Request()
             {
                 ModelId = "gpt-3.5-turbo",
+                //ModelId = "gpt-4",
                 Messages = messages
             };
             using var response = await httpClient.PostAsJsonAsync(endpoint, requestData);

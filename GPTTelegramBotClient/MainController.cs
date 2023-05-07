@@ -67,7 +67,7 @@ namespace GPTTelegramBotClient
             var requestData = new Request()
             {
                 ModelId = "gpt-3.5-turbo",
-                //ModelId = "gpt-4",
+                
                 Messages = messages
             };
             using var response = await httpClient.PostAsJsonAsync(endpoint, requestData);

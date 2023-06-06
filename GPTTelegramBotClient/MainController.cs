@@ -27,32 +27,33 @@ namespace GPTTelegramBotClient
 
         [Action("/start", "Меню")]
         public async Task Start()
-        {           
-            PushL($"✋ Привет, {Context.GetUserFullName()}!");           
-            RowButton("📱 Начать диалог",Q(SendRequestAndGetResponse));                               
+        {          
+            PushL("ℹ️ <strong>Для начала диалога с ChatGPT нажмите кнопку ниже.</strong>");
+            RowButton("✅ Запустить сессию", Q(SendRequestAndGetResponse));           
         }
         [Action]
         public async Task SendRequestAndGetResponse()
         {
-                    
+            PushL("✅ Сессия запущена");
+            await Send();
             while (true)
             {
-                PushL("📖 Введите запрос:");
-                await Send();
+               
                 string? requestText = await AwaitText();
                
                     if (requestText.Equals("/start"))
                     {
-                        PushL("⛔ Диалог остановлен.");
+                        PushL("⛔ Сессия завершена");
                         await Send();
                         break;
                     }
                                    
-                PushL("⌛ Ожидание ответа...");
-                await Send();
+                PushL("⌛");
+                var message = await Send();
                 string responseText = await SendRequest(requestText);
-                PushL(responseText);
-                await Send();
+                Push(responseText); 
+                MessageId = message.MessageId;
+                await Update();               
             }
            
         }
